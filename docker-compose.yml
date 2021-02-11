@@ -1,11 +1,12 @@
 version: "3.8"
 services:
   nginx:
-    build: 
+    build: # 172.25.0.2/
       context: .
-      dockerfile: dockerfile
+      dockerfile: dockerfile 
       args: 
         MYARGUMENTO: "soy un argumento desde docker compose "
+     
     container_name: nginx_svc
     restart: always
     environment: 
@@ -14,4 +15,40 @@ services:
       - 8080:80
     volumes: 
       - ./html/:/usr/share/nginx/html
+    networks: 
+      nginx_network:
+        aliases: 
+          - nginx_host
+
+  nginx2: # 172.25.0.3
+    build: 
+      context: .
+      dockerfile: dockerfile 
+      args: 
+        MYARGUMENTO: "desde el segundo contenedor "
+     
+    container_name: nginx_segundo
+    restart: always
+    environment: 
+      MYVARIABLE: "este es un mensajea desde el segundo docker-compose"
+    ports:
+      - 8180:80
+    volumes: 
+      - ./html2/:/usr/share/nginx/html
+    networks: 
+      nginx_network:
+        aliases: 
+          - nginx2_host  
+            
+volumes: 
+  html: {} 
+  html2: {}
+networks: 
+  nginx_network:
+    name: nginx_net   #asignar un nombre es a nivel dockercompose
+    driver: bridge   #va utilizar ese driver pára la comunicacion de los contenedores 
+    ipam:  #administradores de direcciones ip
+      driver: default     #docker lo va administrar, y le va poner las alias que nostros pusimos
+      
+
   
